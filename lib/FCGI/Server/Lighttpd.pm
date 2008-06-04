@@ -1,5 +1,6 @@
 package FCGI::Server::Lighttpd;
 use Moose;
+use 5.008001;
 
 use Cwd ();
 use File::Which;
@@ -7,7 +8,7 @@ use File::Temp;
 use String::TT qw/tt strip/;
 use MIME::Types;
 
-our $VERSION = '0.0001';
+our $VERSION = '0.01';
 
 with 'MooseX::Getopt';
 
@@ -53,6 +54,10 @@ has static => (
 
 sub run {
     my ($self, $fcgi) = @_;
+
+    $fcgi ||= $self->extra_argv->[0]
+        or confess 'required fcgi script path';
+
     $fcgi = Cwd::abs_path($fcgi);
 
     my $mime_types = do {
@@ -106,12 +111,17 @@ sub run {
 
 =head1 NAME
 
-FCGI::Server::Lighttpd - Module abstract (<= 44 characters) goes here
+FCGI::Server::Lighttpd - standalone fcgi launcher using lighttpd
 
 =head1 SYNOPSIS
 
-  use FCGI::Server::Lighttpd;
-  blah blah blah
+    use FCGI::Server::Lighttpd;
+    
+    my $server = FCGI::Server::Lighttpd->new(
+        port   => 4423,
+        nprocs => 5,
+    );
+    $server->run( '/path/to/script.fcgi' );
 
 =head1 DESCRIPTION
 

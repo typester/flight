@@ -10,5 +10,5 @@ use lib File::Spec->catfile( $FindBin::Bin, qw/.. lib/ );
 use FCGI::Server::Lighttpd;
 
 my $flight = FCGI::Server::Lighttpd->new_with_options;
-$flight->run(@ARGV);
+$flight->run;
 
